@@ -28,7 +28,7 @@ from pyod.models.vae import VAE
 from pyod.models.auto_encoder_torch import AutoEncoder
 from pyod.models.so_gaal import SO_GAAL
 from pyod.models.mo_gaal import MO_GAAL
-from pyod.models.xgbod import XGBOD
+#from pyod.models.xgbod import XGBOD
 from pyod.models.deep_svdd import DeepSVDD
 
 

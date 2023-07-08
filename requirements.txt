@@ -1,0 +1,9 @@
+torch
+gpytorch
+prettytable
+jupyterlab-code-formatter
+black
+isort
+pyod
+combo
+copulas
