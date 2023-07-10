@@ -214,3 +214,22 @@ class AEB_GPLVM(BayesianGPLVM):
         valid_indices = np.arange(self.n)
         batch_indices = np.random.choice(valid_indices, size=batch_size, replace=False)
         return np.sort(batch_indices)
+
+    def _get_individual_batch_idx(self, batch_size, y_train):
+        size = y_train.shape[0]
+        idx_a = np.where(y_train == 1)[0]
+        idx_n = np.where(y_train == 0)[0]
+        ratio = idx_a.shape[0] / size
+
+        qtd_anomaly = int(ratio * batch_size)
+        qtd_normal = batch_size - qtd_anomaly
+
+        idx_n = torch.tensor(np.random.choice(idx_n, qtd_normal, replace=True))
+        idx_a = torch.tensor(np.random.choice(idx_n, qtd_anomaly, replace=True))
+        return torch.cat([idx_n, idx_a]) , ratio 
+
+    def _get_normal_batch_idx(self, batch_size, y_train):
+        idx_n = np.where(y_train == 0)[0]
+        idx_n = np.random.choice(idx_n, batch_size, replace=True)
+
+        return torch.tensor(idx_n)
