@@ -51,7 +51,11 @@ class kl_gaussian_loss_term(AddedLossTerm):
         self.n = n
         self.data_dim = data_dim
 
+
+
     def loss(self):
+        print(self.q_x.loc.shape)
+        print(self.p_x.loc.shape)
         kl_per_latent_dim = kl_divergence(self.q_x, self.p_x).sum(axis=0)
         kl_per_point = kl_per_latent_dim.sum() / self.n  # scalar
         return kl_per_point / self.data_dim
@@ -120,19 +124,19 @@ class NNEncoder(LatentVariable):
         mu = self.mu(Y)
         sg = self.sigma(Y)
 
-        if batch_idx is None:
-            batch_idx = np.arange(self.n)
+        #if batch_idx is None:
+        #    batch_idx = np.arange(self.n)
 
-        mu = mu[batch_idx, ...]
-        sg = sg[batch_idx, ...]
+        #mu = mu[batch_idx, ...]
+        #sg = sg[batch_idx, ...]
 
         q_x = torch.distributions.MultivariateNormal(mu, sg)
 
         prior_x = self.prior_x
-        prior_x.loc = prior_x.loc[: len(batch_idx), ...]
-        prior_x.covariance_matrix = prior_x.covariance_matrix[: len(batch_idx), ...]
-
-        x_kl = kl_gaussian_loss_term(q_x, self.prior_x, len(batch_idx), self.data_dim)
+        prior_x.loc = prior_x.loc[: len(Y), ...]
+        prior_x.covariance_matrix = prior_x.covariance_matrix[: len(Y), ...]
+        #x_kl = kl_gaussian_loss_term(q_x, self.prior_x, len(batch_idx), self.data_dim)
+        x_kl = kl_gaussian_loss_term(q_x, prior_x, self.n, self.data_dim)
         self.update_added_loss_term("x_kl", x_kl)
         return q_x.rsample()
 
@@ -215,21 +219,21 @@ class AEB_GPLVM(BayesianGPLVM):
         batch_indices = np.random.choice(valid_indices, size=batch_size, replace=False)
         return np.sort(batch_indices)
 
-    def _get_individual_batch_idx(self, batch_size, y_train):
-        size = y_train.shape[0]
-        idx_a = np.where(y_train == 1)[0]
-        idx_n = np.where(y_train == 0)[0]
-        ratio = idx_a.shape[0] / size
-
+    def _get_batch_indices(self, batch_size, labels, method="refine"):
+        idx_a = np.where(labels == 1)[0]
+        idx_n = np.where(labels == 0)[0]
+        ratio = len(idx_a) / (len(idx_a) + len(idx_n))
         qtd_anomaly = int(ratio * batch_size)
         qtd_normal = batch_size - qtd_anomaly
-
         idx_n = torch.tensor(np.random.choice(idx_n, qtd_normal, replace=True))
-        idx_a = torch.tensor(np.random.choice(idx_n, qtd_anomaly, replace=True))
-        return torch.cat([idx_n, idx_a]) , ratio 
 
-    def _get_normal_batch_idx(self, batch_size, y_train):
-        idx_n = np.where(y_train == 0)[0]
-        idx_n = np.random.choice(idx_n, batch_size, replace=True)
+        if method == "refine":
+            idx_a = torch.tensor(np.random.choice(idx_n, qtd_anomaly, replace=True))
+        elif method in ["hard", "blind", "soft"]:
+            idx_a = torch.tensor(np.random.choice(idx_a, qtd_anomaly, replace=True))
+        else:
+            raise NotImplementedError("This method doesnt exist!")
 
-        return torch.tensor(idx_n)
+        batch_index = torch.cat([idx_n, idx_a])
+
+        return idx_n, idx_a, batch_index, ratio
