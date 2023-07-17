@@ -54,8 +54,8 @@ class kl_gaussian_loss_term(AddedLossTerm):
 
 
     def loss(self):
-        print(self.q_x.loc.shape)
-        print(self.p_x.loc.shape)
+        #print(self.q_x.loc.shape)
+        #print(self.p_x.loc.shape)
         kl_per_latent_dim = kl_divergence(self.q_x, self.p_x).sum(axis=0)
         kl_per_point = kl_per_latent_dim.sum() / self.n  # scalar
         return kl_per_point / self.data_dim

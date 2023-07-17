@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 # statistical analysis
 from scipy.stats import wilcoxon
 
-class Utils():
+
+class Utils:
     def __init__(self):
         pass
 
@@ -30,7 +31,7 @@ class Utils():
 
         # tensorflow seed
         try:
-            tf.random.set_seed(seed) # for tf >= 2.0
+            tf.random.set_seed(seed)  # for tf >= 2.0
         except:
             tf.set_random_seed(seed)
             tf.random.set_random_seed(seed)
@@ -44,11 +45,11 @@ class Utils():
         if gpu_specific:
             if torch.cuda.is_available():
                 n_gpu = torch.cuda.device_count()
-                print(f'number of gpu: {n_gpu}')
-                print(f'cuda name: {torch.cuda.get_device_name(0)}')
-                print('GPU is on')
+                print(f"number of gpu: {n_gpu}")
+                print(f"cuda name: {torch.cuda.get_device_name(0)}")
+                print("GPU is on")
             else:
-                print('GPU is off')
+                print("GPU is off")
 
             device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         else:
@@ -62,10 +63,10 @@ class Utils():
 
     def data_description(self, X, y):
         des_dict = {}
-        des_dict['Samples'] = X.shape[0]
-        des_dict['Features'] = X.shape[1]
-        des_dict['Anomalies'] = sum(y)
-        des_dict['Anomalies Ratio(%)'] = round((sum(y) / len(y)) * 100, 2)
+        des_dict["Samples"] = X.shape[0]
+        des_dict["Features"] = X.shape[1]
+        des_dict["Anomalies"] = sum(y)
+        des_dict["Anomalies Ratio(%)"] = round((sum(y) / len(y)) * 100, 2)
 
         print(des_dict)
 
@@ -74,7 +75,7 @@ class Utils():
         aucroc = roc_auc_score(y_true=y_true, y_score=y_score)
         aucpr = average_precision_score(y_true=y_true, y_score=y_score, pos_label=1)
 
-        return {'aucroc':aucroc, 'aucpr':aucpr}
+        return {"aucroc": aucroc, "aucpr": aucpr}
 
     # resampling function
     def sampler(self, X_train, y_train, batch_size):
@@ -127,14 +128,16 @@ class Utils():
         return X_train_new, y_train_new
 
     # for PReNet
-    def sampler_pairs(self, X_train_tensor, y_train, epoch, batch_num, batch_size, s_a_a, s_a_u, s_u_u):
-        '''
+    def sampler_pairs(
+        self, X_train_tensor, y_train, epoch, batch_num, batch_size, s_a_a, s_a_u, s_u_u
+    ):
+        """
         X_train_tensor: the input X in the torch.tensor form
         y_train: label in the numpy.array form
 
         batch_num: generate how many batches in one epoch
         batch_size: the batch size
-        '''
+        """
         data_loader_X = []
         data_loader_y = []
 
@@ -173,13 +176,17 @@ class Utils():
             X_train_tensor_right = X_train_tensor[index_right]
 
             # generate label
-            y_train_new = np.append(np.repeat(s_a_a, batch_size // 4), np.repeat(s_a_u, batch_size // 4))
+            y_train_new = np.append(
+                np.repeat(s_a_a, batch_size // 4), np.repeat(s_a_u, batch_size // 4)
+            )
             y_train_new = np.append(y_train_new, np.repeat(s_u_u, batch_size // 2))
             y_train_new = torch.from_numpy(y_train_new).float()
 
             # shuffle
             index_shuffle = np.arange(len(y_train_new))
-            index_shuffle = np.random.choice(index_shuffle, len(index_shuffle), replace=False)
+            index_shuffle = np.random.choice(
+                index_shuffle, len(index_shuffle), replace=False
+            )
 
             X_train_tensor_left = X_train_tensor_left[index_shuffle]
             X_train_tensor_right = X_train_tensor_right[index_shuffle]
@@ -193,7 +200,6 @@ class Utils():
 
     # gradient norm
     def grad_norm(self, grad_tuple):
-
         grad = torch.tensor([0.0])
         for i in range(len(grad_tuple)):
             grad += torch.norm(grad_tuple[i])
@@ -239,16 +245,21 @@ class Utils():
         if p == 1:
             cdf_distance = torch.sum(torch.abs((cdf_tensor_a - cdf_tensor_b)), dim=-1)
         elif p == 2:
-            cdf_distance = torch.sqrt(torch.sum(torch.pow((cdf_tensor_a - cdf_tensor_b), 2), dim=-1))
+            cdf_distance = torch.sqrt(
+                torch.sum(torch.pow((cdf_tensor_a - cdf_tensor_b), 2), dim=-1)
+            )
         else:
-            cdf_distance = torch.pow(torch.sum(torch.pow(torch.abs(cdf_tensor_a - cdf_tensor_b), p), dim=-1), 1 / p)
+            cdf_distance = torch.pow(
+                torch.sum(torch.pow(torch.abs(cdf_tensor_a - cdf_tensor_b), p), dim=-1),
+                1 / p,
+            )
 
         cdf_loss = cdf_distance.mean()
         return cdf_loss
 
     # Calculate the loss like devnet in PyTorch
-    def cal_loss(self, y, y_pred, mode='devnet'):
-        if mode == 'devnet':
+    def cal_loss(self, y, y_pred, mode="devnet"):
+        if mode == "devnet":
             y_pred.squeeze_()
 
             ref = torch.randn(5000)  # sampling from the normal distribution
@@ -269,34 +280,46 @@ class Utils():
         std_metric = np.std(result_show, axis=0).values
 
         # statistical test
-        wilcoxon_df = pd.DataFrame(data=None, index=result_show.columns, columns=result_show.columns)
+        wilcoxon_df = pd.DataFrame(
+            data=None, index=result_show.columns, columns=result_show.columns
+        )
 
         for i in range(wilcoxon_df.shape[0]):
             for j in range(wilcoxon_df.shape[1]):
                 if i != j:
-                    wilcoxon_df.iloc[i, j] = \
-                    wilcoxon(result_show.iloc[:, i] - result_show.iloc[:, j], alternative='greater')[1]
+                    wilcoxon_df.iloc[i, j] = wilcoxon(
+                        result_show.iloc[:, i] - result_show.iloc[:, j],
+                        alternative="greater",
+                    )[1]
 
         # average rank
-        result_show.loc['Ave.rank'] = np.mean(result_show.rank(ascending=False, method='dense', axis=1), axis=0)
+        result_show.loc["Ave.rank"] = np.mean(
+            result_show.rank(ascending=False, method="dense", axis=1), axis=0
+        )
 
         # average metric
         if std:
-            result_show.loc['Ave.metric'] = [str(format(round(a,3), '.3f')) + '±' + str(format(round(s,3), '.3f'))
-                                             for a,s in zip(ave_metric, std_metric)]
+            result_show.loc["Ave.metric"] = [
+                str(format(round(a, 3), ".3f")) + "±" + str(format(round(s, 3), ".3f"))
+                for a, s in zip(ave_metric, std_metric)
+            ]
         else:
-            result_show.loc['Ave.metric'] = [str(format(round(a, 3), '.3f')) for a, s in zip(ave_metric, std_metric)]
-
+            result_show.loc["Ave.metric"] = [
+                
+                str(format(round(a, 3), ".3f")) for a, s in zip(ave_metric, std_metric)
+            ]
 
         # the p-value of wilcoxon statistical test
-        result_show.loc['p-value'] = wilcoxon_df.loc[name].values
-
+        result_show.loc["p-value"] = wilcoxon_df.loc[name].values
 
         for _ in result_show.index:
-            if _ in ['Ave.rank', 'p-value']:
-                result_show.loc[_, :] = [format(round(_, 2), '.2f') for _ in result_show.loc[_, :].values]
+            if _ in ["Ave.rank", "p-value"]:
+                result_show.loc[_, :] = [
+                    format(round(_, 2), ".2f") for _ in result_show.loc[_, :].values
+                ]
 
         # result_show = result_show.astype('float')
         # result_show = result_show.round(2)
 
         return result_show
+
