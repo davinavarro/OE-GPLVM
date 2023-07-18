@@ -13,6 +13,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Experiment:
+    dataset: str
     X_train: torch.tensor
     X_test: torch.tensor
     lb_train: torch.tensor
@@ -88,6 +89,15 @@ class Reporter:
         self.scores = []
         self.epochs = []
         self.terms = []
+        self.countour = []
+
+        self.grid_x, self.grid_y = np.meshgrid(
+            np.linspace(-5, 5, 50),
+            np.linspace(-5, 5, 50),
+        )
+        grid = np.vstack([self.grid_x.ravel(), self.grid_y.ravel()]).T
+
+        self.grid = torch.tensor(grid, dtype=torch.float32)
 
     def save_batch_info(self, epoch, idx_n, idx_a, score):
         self.indices_n.append(idx_n)
@@ -104,7 +114,7 @@ class Reporter:
         }
         self.terms.append(batch_result)
 
-    def plot_train_evolution(self):
+    def plot_train_evolution(self,save = False):
         fig, axs = plt.subplots(2, 3)
         fig.set_figheight(10)
         fig.set_figwidth(20)
@@ -144,24 +154,41 @@ class Reporter:
                 axs[i, j].legend()
                 axs[i, j].set_title(title)
                 k += 1
+        if save:
+            plt.savefig(f"results/scatter_dataset_{self.experiment.dataset}_{self.experiment.elbo}_method_{self.experiment.method}_lr_{self.experiment.lr}_batch_size_{self.experiment.batch_size}.png")
 
-    def plot_test(self, model, likelihood):
-        feature_1, feature_2 = np.meshgrid(
-            np.linspace(0, 1, 30),
-            np.linspace(0, 1, 30),
-        )
-        grid = np.vstack([feature_1.ravel(), feature_2.ravel()]).T
-        grid = torch.tensor(grid, dtype=torch.float32)
-        ll_test, kl_test = calculate_elbo(
+    def save_countour_evolution(self, model, likelihood):
+        ll_test, klu_test ,klx_test = calculate_elbo(
             model,
             likelihood,
-            target=grid,
-            num_data=len(grid),
-            batch_size=len(grid),
+            target=self.grid,
+            num_data=len(self.grid),
+            batch_size=len(self.grid),
             elbo_shape="loe",
         )
-        elbo_test = -(ll_test - kl_test).detach().numpy()
-        zz = np.reshape(elbo_test, feature_1.shape)
+        elbo_test = -(ll_test - klu_test - klx_test).detach().numpy()
+        zz = np.reshape(elbo_test, self.grid_x.shape)
         zz = MinMaxScaler().fit_transform(zz)
-        fig, ax = plt.subplots()
-        cs = ax.contourf(feature_1, feature_2, zz, levels=10)
+        self.countour.append(zz)
+
+    def plot_countour_evolution(self, save  = False):
+        fig, axs = plt.subplots(2, 3)
+        fig.set_figheight(10)
+        fig.set_figwidth(20)
+        plt.suptitle(
+            f"Experiment Attrs: elbo: {self.experiment.elbo}, method: {self.experiment.method}, lr: {self.experiment.lr}, nn_layers: {self.experiment.nn_layers}, batch_size: {self.experiment.batch_size}"
+        )
+        k = 0
+        for i in range(2):
+            for j in range(3):
+                score = self.scores[k]
+                epoch = self.epochs[k]
+                title = f"Epoch {epoch} , ELBO = {score:.2f}"
+                axs[i, j].contourf(self.grid_x, self.grid_y, self.countour[k], levels=10)
+                axs[i, j].set_xlim([-5, 5])
+                axs[i, j].set_ylim([-5, 5])
+                axs[i, j].set_title(title)
+                k += 1
+        
+        if save:
+            plt.savefig(f"results/countour_dataset_{self.experiment.dataset}_{self.experiment.elbo}_method_{self.experiment.method}_lr_{self.experiment.lr}_batch_size_{self.experiment.batch_size}.png")

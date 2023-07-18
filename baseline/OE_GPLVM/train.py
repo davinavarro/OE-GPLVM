@@ -6,26 +6,30 @@ import numpy as np
 from torch.distributions import kl_divergence
 
 
+def create_dist_qx(model, batch_target):
+    mu = model.predict_latent(batch_target)[0]
+    sigma = model.predict_latent(batch_target)[1]
+    local_q_x = MultivariateNormal(mu, sigma)
+    return mu, sigma, local_q_x
+
+
+def create_dist_prior(
+    batch_target,
+    mu,
+):
+    local_p_x_mean = torch.zeros(batch_target.shape[0], mu.shape[1])
+    local_p_x_covar = torch.eye(mu.shape[1])
+    local_p_x = MultivariateNormalPrior(local_p_x_mean, local_p_x_covar)
+    return local_p_x
+
+
 def calculate_elbo(
     model, likelihood, target, num_data, batch_size, elbo_shape="default"
 ):
     batch_target = target
-
-    # Criacao de Q_x
-    mu = model.predict_latent(batch_target)[0]
-    sigma = model.predict_latent(batch_target)[1]
-    local_q_x = MultivariateNormal(mu, sigma)
-
-    # Criacao da Prior
-    local_batch_size = batch_target.shape[0]
-    local_p_x_mean = torch.zeros(local_batch_size, mu.shape[1])
-    local_p_x_covar = torch.eye(mu.shape[1])
-    local_p_x = MultivariateNormalPrior(local_p_x_mean, local_p_x_covar)
-
-    # Predicao do batch
+    mu, sigma, local_q_x = create_dist_qx(model, batch_target)
+    local_p_x = create_dist_prior(batch_target, mu)
     batch_output = model(model.sample_latent_variable(batch_target))
-
-    # Expected Log Prob
     exp_log_prob = likelihood.expected_log_prob(batch_target.T, batch_output)
 
     if elbo_shape == "default":
@@ -43,14 +47,15 @@ def calculate_elbo(
     elif elbo_shape == "loe":
         log_likelihood = exp_log_prob.sum(0).div(batch_size)  # Vetor 1xN
         kl_x = kl_divergence(local_q_x, local_p_x).div(num_data)  # Vetor 1xN
-        return log_likelihood, kl_x
+        kl_u = 0
+        return log_likelihood, kl_u, kl_x
 
 
 def get_loe_idx(model, likelihood, Y_train, batch_index, train_data, ratio):
     batch_train = Y_train[batch_index]
     batch_size = len(batch_index)
 
-    ll_0, kl_0 = calculate_elbo(
+    ll_0, klu_0,  kl_0 = calculate_elbo(
         model, likelihood, batch_train, batch_size, train_data, elbo_shape="loe"
     )
     score = ll_0 - kl_0
@@ -75,7 +80,7 @@ def loss_loe(method, loss_normal, loss_anomaly):
         return (loss_normal + (-1) * loss_anomaly).sum()
 
 
-def get_batch_indices(batch_size, labels, method="refine"):
+def get_batch_indices(batch_size, labels, method=None):
     idx_a = np.where(labels == 1)[0]
     idx_n = np.where(labels == 0)[0]
     ratio = len(idx_a) / (len(idx_a) + len(idx_n))
