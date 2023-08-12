@@ -46,8 +46,19 @@ class OE_GPLVM:
         self.model_name = model_name
         self.tune = tune
         self.batch_size = 128
-        self.n_epochs = 2000
+        self.n_epochs = 5000
         self.likelihood = GaussianLikelihood()
+        self.llkn = []
+        self.klxn = []
+        self.klun = []
+        self.llka = []
+        self.klxa = []
+        self.klua = []
+        self.loss_n = []
+        self.loss_a = []
+        self.elbo_max = []
+        self.constant = []
+        self.loss_total = []
 
     def _get_indices(self, y_train):
         idx_a = np.where(y_train == 1)[0]
@@ -65,27 +76,28 @@ class OE_GPLVM:
         batch_index = torch.cat([idx_n, idx_a])
 
         return idx_n, idx_a, batch_index
-    
-    def _expected_log_prob(self, X, indices):
-        batch_target = X[indices]
-        batch_output = self.model(self.model.sample_latent_variable(batch_target))
-        exp_log_prob = self.likelihood.expected_log_prob(batch_target.T, batch_output)
+
+    def _expected_log_prob(self, target):  # X, indices):
+        output = self.model(self.model.sample_latent_variable(target))
+        exp_log_prob = self.likelihood.expected_log_prob(target.T, output)
         return exp_log_prob
-    
-    def _kl_divergence_latent(self, X, indices = None):
-        if indices is not None:
-            batch_target = X[indices]
-        else:
-            batch_target = X
-        mu, sigma, local_q_x = create_dist_qx(self.model, batch_target)
-        local_p_x = create_dist_prior(batch_target, mu)
+
+    def _kl_divergence_latent(self, target):  # X, indices=None):
+        mu, sigma, local_q_x = create_dist_qx(self.model, target)
+        local_p_x = create_dist_prior(target, mu)
 
         return kl_divergence(local_q_x, local_p_x).div(self.n_train)
 
-    def _kl_divergence_variational(self):
-        kl_variational = self.model.variational_strategy.kl_divergence().div(self.n_train)
-        return  kl_variational.div(self.batch_size).expand((self.batch_size,self.data_dim)).T
-
+    def _kl_divergence_variational(self, target):
+        ll_shape = torch.zeros_like(target.T)
+        klu = (
+            ll_shape.T.add_(
+                self.model.variational_strategy.kl_divergence().div(self.batch_size)
+            )
+            .sum(-1)
+            .T.div((self.n_train))
+        )
+        return klu
 
     def _get_loe_index(self, X, indices):
         ll_0, klu_0, kl_0 = self._calculate_terms(X, indices)
@@ -106,9 +118,24 @@ class OE_GPLVM:
         exp_log_prob = self.likelihood.expected_log_prob(batch_target.T, batch_output)
         log_likelihood = exp_log_prob.sum(0).div(self.batch_size)  # Vetor 1xN
         kl_x = kl_divergence(local_q_x, local_p_x).div(self.n_train)  # Vetor 1xN
-        kl_u = 0
+        kl_u = self._kl_divergence_variational(batch_target)  # Vetor 1xN
+
+        #log_marginal = self.likelihood.log_marginal(batch_target.T, batch_output).sum(0).div(self.batch_size)
 
         return log_likelihood, kl_u, kl_x
+
+    def loss_fn(self, X_train, batch_index):
+        self.elbo_term = 0
+        self.elbo_term_max = 0
+        ll, klu, klx = self._calculate_terms(X_train, batch_index)
+        elbo = ll - klu - klx
+        self.elbo_term = elbo
+        self.elbo_term_max = elbo.max()
+        loss_normal = -elbo
+        loss_anomaly = -torch.log(
+            0.001 + torch.exp(elbo).max().item() - torch.exp(elbo)
+        )
+        return loss_normal, loss_anomaly
 
     def fit(self, X_train, y_train, ratio=False):
         self.n_train = len(X_train)
@@ -138,7 +165,181 @@ class OE_GPLVM:
             self.encoder,
             self.nn_layers,
         )
+
         
+
+        self.optimizer = torch.optim.Adam(
+            [
+                {"params": self.model.parameters()},
+                {"params": self.likelihood.parameters()},
+            ],
+            self.lr,
+        )
+
+        #scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=200, gamma=0.8)
+
+        self.model.train()
+        self.abs_diff = []
+        iterator = trange(self.n_epochs, leave=True)
+
+
+        for i in iterator:
+            self.optimizer.zero_grad()
+            _, _, batch_index = self._get_indices(y_train)
+            idx_n, idx_a = self._get_loe_index(X_train, batch_index)
+            ll_n, klu_n, kl_n = self._calculate_terms(X_train, idx_n)
+            ll_a, klu_a, kl_a = self._calculate_terms(X_train, idx_a)
+
+            self.klun.append(klu_n.sum().detach().numpy())
+            self.klua.append(klu_a.sum().detach().numpy())
+
+            self.klxn.append(kl_n.sum().detach().numpy())
+            self.klxa.append(kl_a.sum().detach().numpy())
+
+            self.llkn.append(ll_n.sum().detach().numpy())
+            self.llka.append(ll_a.sum().detach().numpy())
+
+            abs_diff = ll_a.sum().detach().numpy() - (ll_n.sum().detach().numpy())
+            self.abs_diff.append(abs_diff)
+
+            
+            loss_normal, loss_anomaly = (ll_n - klu_n - kl_n).sum(), (
+                ll_a - klu_a - kl_a
+            ).sum()
+
+            self.loss = -(
+                self.alpha_n * loss_normal + self.alpha_a * loss_anomaly
+            ).sum()
+
+            #if abs_diff < -0.001:
+            #    self.loss = -(loss_normal + loss_anomaly).sum()
+
+            self.loss.backward()
+            self.optimizer.step()
+
+            iterator.set_description(
+                "Loss: " + str(float(np.round(self.loss.item(), 2))) + ", iter no: "
+            )
+
+            #if self.loss.item() < -1e-2:
+            #    break
+
+    def fit_loe(self, X_train, y_train, ratio=False):
+        self.n_train = len(X_train)
+        self.data_dim = X_train.shape[1]
+
+        if self.tune:
+            pass
+        else:
+            self.nn_layers = (5, 5)
+            self.n_inducing = 50
+            self.latent_dim = 2
+            self.lr = 0.01
+            self.alpha_n = 1
+            self.alpha_a = -1
+
+        X_prior_mean = torch.zeros(self.n_train, self.latent_dim)
+        X_prior_covar = torch.eye(X_prior_mean.shape[1])
+        prior_x = MultivariateNormalPrior(X_prior_mean, X_prior_covar)
+        self.encoder = NNEncoder(
+            self.n_train, self.latent_dim, prior_x, self.data_dim, self.nn_layers
+        )
+        self.model = AEB_GPLVM(
+            self.n_train,
+            self.data_dim,
+            self.latent_dim,
+            self.n_inducing,
+            self.encoder,
+            self.nn_layers,
+        )
+
+        self.optimizer = torch.optim.Adam(
+            [
+                {"params": self.model.parameters()},
+                {"params": self.likelihood.parameters()},
+            ],
+            self.lr,
+        )
+
+        self.model.train()
+        iterator = trange(self.n_epochs, leave=True)
+
+        for i in iterator:
+            self.optimizer.zero_grad()
+            _, _, batch_index = self._get_indices(y_train)
+            loss_normal, loss_anomaly = self.loss_fn(X_train, batch_index)
+            self.loss_n.append(loss_normal.mean().detach().numpy())
+            self.loss_a.append(loss_anomaly.mean().detach().numpy())
+
+            score = loss_normal - loss_anomaly
+
+            _, idx_n = torch.topk(
+                score,
+                int(score.shape[0] * (1 - self.ratio)),
+                largest=False,
+                sorted=False,
+            )
+            _, idx_a = torch.topk(
+                score, int(score.shape[0] * self.ratio), largest=True, sorted=False
+            )
+            loss = torch.cat(
+                [
+                    loss_normal[idx_n],
+                    0.5 * loss_normal[idx_a] + 0.5 * loss_anomaly[idx_a],
+                ],
+                0,
+            )
+            loss_mean = -(-loss.mean())
+
+            #if i <= 1000:
+            #    loss = loss_normal
+            #    loss_mean = loss_normal.mean()
+
+            # self.loss = -(
+            #    self.alpha_n * loss_normal + self.alpha_a * loss_anomaly
+            # ).sum()
+            # self.loss.backward()
+            # self.optimizer.zero_grad()
+            loss_mean.backward()
+            self.optimizer.step()
+
+            self.loss_total.append(loss_mean.item())
+            iterator.set_description(
+                "Loss: " + str(float(np.round(loss_mean.item(), 2))) + ", iter no: "
+            )
+            # if self.loss.item() < -1e8:
+            #   break
+
+        pass
+    def fit_loe_2(self, X_train, y_train, ratio=False):
+        self.n_train = len(X_train)
+        self.data_dim = X_train.shape[1]
+
+        if self.tune:
+            pass
+        else:
+            self.nn_layers = (5, 5)
+            self.n_inducing = 50
+            self.latent_dim = 2
+            self.lr = 0.01
+            self.alpha_n = 1
+            self.alpha_a = -1
+
+        X_prior_mean = torch.zeros(self.n_train, self.latent_dim)
+        X_prior_covar = torch.eye(X_prior_mean.shape[1])
+        prior_x = MultivariateNormalPrior(X_prior_mean, X_prior_covar)
+        self.encoder = NNEncoder(
+            self.n_train, self.latent_dim, prior_x, self.data_dim, self.nn_layers
+        )
+        self.model = AEB_GPLVM(
+            self.n_train,
+            self.data_dim,
+            self.latent_dim,
+            self.n_inducing,
+            self.encoder,
+            self.nn_layers,
+        )
+
         self.optimizer = torch.optim.Adam(
             [
                 {"params": self.model.parameters()},
@@ -153,21 +354,32 @@ class OE_GPLVM:
             self.optimizer.zero_grad()
             _, _, batch_index = self._get_indices(y_train)
             idx_n, idx_a = self._get_loe_index(X_train, batch_index)
-            ll_n, klu, kl_n = self._calculate_terms(X_train, idx_n)
-            ll_a, klu, kl_a = self._calculate_terms(X_train, idx_a)
-            loss_normal, loss_anomaly = (ll_n - kl_n).sum(), (ll_a - kl_a).sum()
+            ll_n, klu_n, kl_n = self._calculate_terms(X_train, idx_n)
+            ll_a, klu_a, kl_a = self._calculate_terms(X_train, idx_a)
+
+            self.klun.append(klu_n.sum().detach().numpy())
+            self.klua.append(klu_a.sum().detach().numpy())
+
+            self.klxn.append(kl_n.sum().detach().numpy())
+            self.klxa.append(kl_a.sum().detach().numpy())
+
+            self.llkn.append(ll_n.sum().detach().numpy())
+            self.llka.append(ll_a.sum().detach().numpy())
+            loss_normal, loss_anomaly = (ll_n - klu_n - kl_n).sum(), (
+                ll_a - klu_a - kl_a
+            ).sum()
+
             self.loss = -(
                 self.alpha_n * loss_normal + self.alpha_a * loss_anomaly
             ).sum()
             self.loss.backward()
             self.optimizer.step()
-            
+
             iterator.set_description(
                 "Loss: " + str(float(np.round(self.loss.item(), 2))) + ", iter no: "
             )
-            if self.loss.item() < -100:
+            if self.loss.item() < -1e8:
                 break
-
     def predict_score(self, X_test):
         with torch.no_grad():
             self.model.eval()
@@ -179,10 +391,11 @@ class OE_GPLVM:
         exp_log_prob = self.likelihood.expected_log_prob(X_test.T, X_pred)
         log_likelihood = exp_log_prob.sum(0).div(n_test)
         kl_x = kl_divergence(local_q_x, local_p_x).div(n_test)
-        kl_u = 0
+        kl_u = self._kl_divergence_variational(X_test)
         score = -(log_likelihood - kl_u - kl_x).detach().numpy()
         score = MinMaxScaler().fit_transform(np.reshape(score, (-1, 1)))
         return score
+
 
 class STD_GPLVM:
     def __init__(self, seed, model_name, tune=False):
