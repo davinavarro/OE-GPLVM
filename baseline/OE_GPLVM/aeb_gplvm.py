@@ -14,6 +14,59 @@ from gpytorch.kernels import ScaleKernel, RBFKernel
 from gpytorch.distributions import MultivariateNormal
 
 
+from dataclasses import dataclass, asdict, field
+from typing import List
+
+
+@dataclass
+class Metrics:
+    loss_normal: List = field(default_factory=list)
+    loss_anomaly: List = field(default_factory=list)
+    roc: List = field(default_factory=list)
+    pr: List = field(default_factory=list)
+    aucroc: float = 0.00
+    aucpr: float = 0.00
+
+
+@dataclass
+class Parameters:
+    nn_layers: tuple
+    nn_architeture: str
+    kernel: str
+    lr: float
+    epoch: int
+    batch_size: int
+
+
+@dataclass
+class DataInput:
+    X_train: List = field(default_factory=list)
+    X_test: List = field(default_factory=list)
+    lb_train: List = field(default_factory=list)
+    lb_test: List = field(default_factory=list)
+    ratio: float = 0.00
+    labeled_anomalies: float = 0.00
+
+
+@dataclass
+class DataOutput:
+    X_mean_pred: List = field(default_factory=list)
+    X_cov_pred: List = field(default_factory=list)
+    Y_mean_pred: List = field(default_factory=list)
+    Y_cov_pred: List = field(default_factory=list)
+    score: List = field(default_factory=list)
+    lenghtscale: List = field(default_factory=list)
+
+
+@dataclass
+class Result:
+    experiment_name: str
+    input: DataInput
+    output: DataOutput
+    params: Parameters
+    metrics: Metrics
+
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -51,11 +104,7 @@ class kl_gaussian_loss_term(AddedLossTerm):
         self.n = n
         self.data_dim = data_dim
 
-
-
     def loss(self):
-        #print(self.q_x.loc.shape)
-        #print(self.p_x.loc.shape)
         kl_per_latent_dim = kl_divergence(self.q_x, self.p_x).sum(axis=0)
         kl_per_point = kl_per_latent_dim.sum() / self.n  # scalar
         return kl_per_point / self.data_dim
@@ -124,18 +173,18 @@ class NNEncoder(LatentVariable):
         mu = self.mu(Y)
         sg = self.sigma(Y)
 
-        #if batch_idx is None:
+        # if batch_idx is None:
         #    batch_idx = np.arange(self.n)
 
-        #mu = mu[batch_idx, ...]
-        #sg = sg[batch_idx, ...]
+        # mu = mu[batch_idx, ...]
+        # sg = sg[batch_idx, ...]
 
         q_x = torch.distributions.MultivariateNormal(mu, sg)
 
         prior_x = self.prior_x
         prior_x.loc = prior_x.loc[: len(Y), ...]
         prior_x.covariance_matrix = prior_x.covariance_matrix[: len(Y), ...]
-        #x_kl = kl_gaussian_loss_term(q_x, self.prior_x, len(batch_idx), self.data_dim)
+        # x_kl = kl_gaussian_loss_term(q_x, self.prior_x, len(batch_idx), self.data_dim)
         x_kl = kl_gaussian_loss_term(q_x, prior_x, self.n, self.data_dim)
         self.update_added_loss_term("x_kl", x_kl)
         return q_x.rsample()
@@ -145,6 +194,7 @@ class BayesianGPLVM(ApproximateGP):
     def __init__(self, X, variational_strategy):
         super(BayesianGPLVM, self).__init__(variational_strategy)
         self.X = X
+        self.metrics = Metrics()
 
     def forward(self):
         raise NotImplementedError
@@ -169,6 +219,24 @@ class BayesianGPLVM(ApproximateGP):
         y_pred_mean = y_pred.loc.detach()
         y_pred_covar = y_pred.covariance_matrix.detach()
         return y_pred_mean, y_pred_covar
+
+    def save_output(self, Y):
+        self.data_output = DataOutput(
+            self.get_X_mean(Y),
+            self.get_X_scales(Y),
+            *self.reconstruct_y(Y),
+            self.covar_module.base_kernel.lengthscale,
+        )
+
+    def save_input(self, *args, **kwargs):
+        self.data_input = DataInput(**kwargs)
+
+    def save_params(self, *args, **kwargs):
+        self.params = Parameters(**kwargs)
+
+    def save_losses(self, loss_normal, loss_anomaly=0.00):
+        self.metrics.loss_anomaly.append(loss_anomaly)
+        self.metrics.loss_normal.append(loss_normal)
 
     def get_trainable_param_names(self):
         table = PrettyTable(["Modules", "Parameters"])
