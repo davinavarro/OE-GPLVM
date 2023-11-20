@@ -71,7 +71,7 @@ class PYOD:
             "AutoEncoder": AutoEncoder,
             "SOGAAL": SO_GAAL,
             "MOGAAL": MO_GAAL,
-            "XGBOD": XGBOD,
+            #"XGBOD": XGBOD,
         }
 
         self.tune = tune

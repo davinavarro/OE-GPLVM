@@ -161,6 +161,8 @@ class RunPipeline:
                 self.model_dict[_] = FTTransformer
         else:
             raise NotImplementedError
+            
+        
 
         # We remove the following model for considering the computational cost
         for _ in ["SOGAAL", "MOGAAL", "LSCP", "MCD", "FeatureBagging"]:

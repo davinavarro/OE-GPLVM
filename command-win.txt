@@ -1,0 +1,7 @@
+# OE-GPLVM
+
+
+docker run -it --rm -p 8888:8888 --user root -e GRANT_SUDO=yes -v  C:\Users\Davi\Documents\Mestrado-Win\Repos:/home/jovyan/work/ mestrado-final:v2
+
+
+docker run -it --rm -p 8888:8888 --user root -e GRANT_SUDO=yes -v  $(pwd):/home/jovyan/work/ mestrado-final:v2
