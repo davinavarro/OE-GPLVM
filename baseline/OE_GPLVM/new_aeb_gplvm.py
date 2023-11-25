@@ -1,6 +1,6 @@
 from dataclasses import dataclass, asdict, field
 from gpytorch.distributions import MultivariateNormal
-from gpytorch.kernels import ScaleKernel, RBFKernel
+from gpytorch.kernels import ScaleKernel, RBFKernel, MaternKernel
 from gpytorch.likelihoods import GaussianLikelihood
 from gpytorch.means import ConstantMean, ZeroMean
 from gpytorch.mlls import VariationalELBO
@@ -169,7 +169,7 @@ class BayesianGPLVM(ApproximateGP):
 
 
 class GP_Decoder(BayesianGPLVM):
-    def __init__(self, n, data_dim, latent_dim, n_inducing, X, nn_layers=None):
+    def __init__(self, n, data_dim, latent_dim, n_inducing, X, nn_layers=None, kernel = None):
         self.n = n
         self.batch_shape = torch.Size([data_dim])
 
@@ -185,7 +185,20 @@ class GP_Decoder(BayesianGPLVM):
         # Kernel
         # self.mean_module = ConstantMean(ard_num_dims=latent_dim)
         self.mean_module = ZeroMean()
-        self.covar_module = ScaleKernel(RBFKernel(ard_num_dims=latent_dim))
+        if not kernel:
+            print("Setando Kernel RBF Padrão")
+            self.covar_module = ScaleKernel(RBFKernel(ard_num_dims=latent_dim))
+        else:
+            if kernel == "rbf":
+                self.covar_module = ScaleKernel(RBFKernel(ard_num_dims=latent_dim))
+            elif kernel == "matern_5_2":
+                self.covar_module = ScaleKernel(MaternKernel(nu=2.5,ard_num_dims=latent_dim))
+            elif kernel == "matern_3_2":
+                self.covar_module = ScaleKernel(MaternKernel(nu=1.5,ard_num_dims=latent_dim))
+            else:
+                raise NotImplemented
+        
+        
 
     def forward(self, X):
         mean_x = self.mean_module(X)
