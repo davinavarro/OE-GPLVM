@@ -1,0 +1,21 @@
+{
+    "gplvm_type": "normal",
+    "dataset": "01_ALOI",
+    "noise_type": "global",
+    "labeled_anomalies": 0.05,
+    "data_dim": 27,
+    "n_samples": 7000,
+    "n_dim_latent": 13,
+    "n_epochs": 5000,
+    "n_inducing": 50,
+    "n_layers": [
+        5,
+        5
+    ],
+    "learning_rate": 0.01,
+    "batch_size": 128,
+    "auc_roc": 0.4939766318246895,
+    "auc_pr": 0.04174318309977489,
+    "elbo_normal": [],
+    "inv_lenghtscale": []
+}
