@@ -20,6 +20,7 @@ import pickle as pkl
 import sys
 import torch
 import torch.nn.functional as F
+from tqdm import trange
 
 
 class LatentVariable(gpytorch.Module):
@@ -169,7 +170,9 @@ class BayesianGPLVM(ApproximateGP):
 
 
 class GP_Decoder(BayesianGPLVM):
-    def __init__(self, n, data_dim, latent_dim, n_inducing, X, nn_layers=None, kernel = None):
+    def __init__(
+        self, n, data_dim, latent_dim, n_inducing, X, nn_layers=None, kernel=None
+    ):
         self.n = n
         self.batch_shape = torch.Size([data_dim])
 
@@ -192,13 +195,15 @@ class GP_Decoder(BayesianGPLVM):
             if kernel == "rbf":
                 self.covar_module = ScaleKernel(RBFKernel(ard_num_dims=latent_dim))
             elif kernel == "matern_5_2":
-                self.covar_module = ScaleKernel(MaternKernel(nu=2.5,ard_num_dims=latent_dim))
+                self.covar_module = ScaleKernel(
+                    MaternKernel(nu=2.5, ard_num_dims=latent_dim)
+                )
             elif kernel == "matern_3_2":
-                self.covar_module = ScaleKernel(MaternKernel(nu=1.5,ard_num_dims=latent_dim))
+                self.covar_module = ScaleKernel(
+                    MaternKernel(nu=1.5, ard_num_dims=latent_dim)
+                )
             else:
                 raise NotImplemented
-        
-        
 
     def forward(self, X):
         mean_x = self.mean_module(X)
@@ -210,3 +215,80 @@ class GP_Decoder(BayesianGPLVM):
         valid_indices = np.arange(self.n)
         batch_indices = np.random.choice(valid_indices, size=batch_size, replace=False)
         return np.sort(batch_indices)
+
+
+class AD_GPLVM:
+    def __init__(
+        self,
+        latent_dim: int,
+        n_inducing: int,
+        n_epochs: int,
+        nn_layers: tuple,
+        lr: float,
+        batch_size: int,
+    ) -> None:
+        self.latent_dim = latent_dim
+        self.n_inducing = n_inducing
+        self.n_epochs = n_epochs
+        self.nn_layers = nn_layers
+        self.lr = lr
+        self.batch_size = batch_size
+
+    def fit(self, Y_train):
+        n_train = len(Y_train)
+        data_dim = Y_train.shape[1]
+
+        X_prior_mean = torch.zeros(n_train, self.latent_dim)
+        X_prior_covar = torch.eye(X_prior_mean.shape[1])
+        prior_x = MultivariateNormalPrior(X_prior_mean, X_prior_covar)
+
+        encoder = NN_Encoder(
+            n_train, self.latent_dim, prior_x, data_dim, self.nn_layers
+        )
+
+        model = GP_Decoder(
+            n_train,
+            data_dim,
+            self.latent_dim,
+            self.n_inducing,
+            encoder,
+            self.nn_layers,
+        )
+
+        likelihood = GaussianLikelihood()
+
+        optimizer = torch.optim.Adam(
+            [
+                {"params": model.parameters()},
+                {"params": likelihood.parameters()},
+            ],
+            self.lr,
+        )
+
+        loss_list = []
+
+        elbo = VariationalELBO(likelihood, model, num_data=len(Y_train))
+        model.train()
+
+        iterator = trange(1, leave=True)
+
+        for i in iterator:
+            batch_index = model._get_batch_idx(self.batch_size)
+            optimizer.zero_grad()
+            sample = model.sample_latent_variable(Y_train)
+            sample_batch = sample[batch_index]
+            output_batch = model(sample_batch)
+            print(sample.shape)
+            print(output_batch)
+            loss = -elbo(output_batch, Y_train[batch_index].T).sum()
+            loss_list.append(loss.item())
+            iterator.set_description(
+                "Loss: " + str(float(np.round(loss.item(), 2))) + ", iter no: " + str(i)
+            )
+            loss.backward()
+            optimizer.step()
+
+    def predict_score(self, X_test):
+        with torch.no_grad():
+            self.model.eval()
+            self.likelihood.eval()
