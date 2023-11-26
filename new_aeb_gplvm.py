@@ -151,18 +151,6 @@ class BayesianGPLVM(ApproximateGP):
         y_pred_covar = y_pred.covariance_matrix.detach()
         return y_pred_mean, y_pred_covar
 
-    def get_trainable_param_names(self):
-        table = PrettyTable(["Modules", "Parameters"])
-        total_params = 0
-        for name, parameter in self.named_parameters():
-            if not parameter.requires_grad:
-                continue
-            param = parameter.numel()
-            table.add_row([name, param])
-            total_params += param
-        print(table)
-        print(f"Total Trainable Params: {total_params}")
-
     def store(self, losses, likelihood):
         self.losses = losses
         self.likelihood = likelihood
@@ -316,3 +304,16 @@ class AD_GPLVM:
             score = MinMaxScaler().fit_transform(np.reshape(score, (-1, 1)))
 
             return score
+
+    def get_2d_latent(self):
+        inv_lengthscale = 1 / self.model.covar_module.base_kernel.lengthscale
+        values, indices = torch.topk(
+            self.model.covar_module.base_kernel.lengthscale, k=2, largest=False
+        )
+
+        l1 = indices.numpy().flatten()[0]
+        l2 = indices.numpy().flatten()[1]
+
+        X = self.model.X.q_mu.detach().numpy()
+        std = torch.nn.functional.softplus(self.model.X.q_log_sigma).detach().numpy()
+        return X, std
