@@ -1,4 +1,3 @@
-from dataclasses import dataclass, asdict, field
 from gpytorch.distributions import MultivariateNormal
 from gpytorch.kernels import ScaleKernel, RBFKernel, MaternKernel
 from gpytorch.likelihoods import GaussianLikelihood
@@ -7,8 +6,7 @@ from gpytorch.mlls import VariationalELBO
 from gpytorch.mlls.added_loss_term import AddedLossTerm
 from gpytorch.models import ApproximateGP
 from gpytorch.priors import NormalPrior, MultivariateNormalPrior
-from gpytorch.variational import CholeskyVariationalDistribution
-from gpytorch.variational import VariationalStrategy
+from gpytorch.variational import CholeskyVariationalDistribution, VariationalStrategy
 from prettytable import PrettyTable
 from torch import nn
 from torch.distributions import kl_divergence
@@ -21,6 +19,7 @@ import sys
 import torch
 import torch.nn.functional as F
 from tqdm import trange
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 
 class LatentVariable(gpytorch.Module):
@@ -234,61 +233,86 @@ class AD_GPLVM:
         self.lr = lr
         self.batch_size = batch_size
 
-    def fit(self, Y_train):
+    def fit(self, Y_train: torch.tensor):
         n_train = len(Y_train)
+        self.n_train = n_train
         data_dim = Y_train.shape[1]
 
         X_prior_mean = torch.zeros(n_train, self.latent_dim)
         X_prior_covar = torch.eye(X_prior_mean.shape[1])
         prior_x = MultivariateNormalPrior(X_prior_mean, X_prior_covar)
 
-        encoder = NN_Encoder(
+        self.encoder = NN_Encoder(
             n_train, self.latent_dim, prior_x, data_dim, self.nn_layers
         )
 
-        model = GP_Decoder(
+        self.model = GP_Decoder(
             n_train,
             data_dim,
             self.latent_dim,
             self.n_inducing,
-            encoder,
+            self.encoder,
             self.nn_layers,
         )
 
-        likelihood = GaussianLikelihood()
+        self.likelihood = GaussianLikelihood()
 
-        optimizer = torch.optim.Adam(
+        self.optimizer = torch.optim.Adam(
             [
-                {"params": model.parameters()},
-                {"params": likelihood.parameters()},
+                {"params": self.model.parameters()},
+                {"params": self.likelihood.parameters()},
             ],
             self.lr,
         )
 
-        loss_list = []
+        self.loss_list = []
 
-        elbo = VariationalELBO(likelihood, model, num_data=len(Y_train))
-        model.train()
+        elbo = VariationalELBO(self.likelihood, self.model, num_data=len(Y_train))
+        self.model.train()
 
-        iterator = trange(1, leave=True)
+        iterator = trange(self.n_epochs, leave=True)
 
         for i in iterator:
-            batch_index = model._get_batch_idx(self.batch_size)
-            optimizer.zero_grad()
-            sample = model.sample_latent_variable(Y_train)
+            batch_index = self.model._get_batch_idx(self.batch_size)
+            self.optimizer.zero_grad()
+            sample = self.model.sample_latent_variable(Y_train)
             sample_batch = sample[batch_index]
-            output_batch = model(sample_batch)
-            print(sample.shape)
-            print(output_batch)
+            output_batch = self.model(sample_batch)
             loss = -elbo(output_batch, Y_train[batch_index].T).sum()
-            loss_list.append(loss.item())
+            self.loss_list.append(loss.item())
             iterator.set_description(
                 "Loss: " + str(float(np.round(loss.item(), 2))) + ", iter no: " + str(i)
             )
             loss.backward()
-            optimizer.step()
+            self.optimizer.step()
 
-    def predict_score(self, X_test):
+    def predict_score(self, X_test: torch.tensor):
         with torch.no_grad():
             self.model.eval()
             self.likelihood.eval()
+
+            n_test = len(X_test)
+
+            mu = self.model.predict_latent(X_test)[0]
+            sigma = self.model.predict_latent(X_test)[1]
+            local_q_x = MultivariateNormal(mu, sigma)
+
+            local_p_x_mean = torch.zeros(X_test.shape[0], mu.shape[1])
+            local_p_x_covar = torch.eye(mu.shape[1])
+            local_p_x = MultivariateNormalPrior(local_p_x_mean, local_p_x_covar)
+
+            X_pred = self.model(self.model.sample_latent_variable(X_test))
+
+            log_likelihood = (
+                self.likelihood.expected_log_prob(X_test.T, X_pred).sum(0).div(n_test)
+            )
+            kl_x = kl_divergence(local_q_x, local_p_x).div(n_test)
+
+            ll_shape = torch.zeros_like(X_test.T)
+            klu = self.model.variational_strategy.kl_divergence().div(self.batch_size)
+            klu_expanded = ll_shape.T.add_(klu).sum(-1).T.div((self.n_train))
+
+            score = -(log_likelihood - klu_expanded - kl_x).detach().numpy()
+            score = MinMaxScaler().fit_transform(np.reshape(score, (-1, 1)))
+
+            return score
