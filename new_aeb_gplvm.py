@@ -176,7 +176,7 @@ class GP_Decoder(BayesianGPLVM):
         # self.mean_module = ConstantMean(ard_num_dims=latent_dim)
         self.mean_module = ZeroMean()
         if not kernel:
-            print("Setando Kernel RBF Padrão")
+            print("Kernel não escolhido!")
             self.covar_module = ScaleKernel(RBFKernel(ard_num_dims=latent_dim))
         else:
             if kernel == "rbf":
@@ -258,7 +258,7 @@ class AD_GPLVM:
         elbo = VariationalELBO(self.likelihood, self.model, num_data=len(Y_train))
         self.model.train()
 
-        iterator = trange(self.n_epochs, leave=True)
+        iterator = trange(self.n_epochs, leave=None, miniters = 100)
 
         for i in iterator:
             batch_index = self.model._get_batch_idx(self.batch_size)
@@ -268,9 +268,10 @@ class AD_GPLVM:
             output_batch = self.model(sample_batch)
             loss = -elbo(output_batch, Y_train[batch_index].T).sum()
             self.loss_list.append(loss.item())
-            iterator.set_description(
-                "Loss: " + str(float(np.round(loss.item(), 2))) + ", iter no: " + str(i)
-            )
+            if i % 500 == 0:
+                iterator.set_description(
+                    "Loss: " + str(float(np.round(loss.item(), 2))) + ", iter no: " + str(i)
+                )
             loss.backward()
             self.optimizer.step()
 
