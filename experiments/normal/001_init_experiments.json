@@ -1,0 +1,1130 @@
+[
+    {
+        "dataset": "03_backdoor",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "03_backdoor",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "03_backdoor",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "03_backdoor",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "46_WPBC",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "46_WPBC",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "46_WPBC",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "46_WPBC",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "36_speech",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "36_speech",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "36_speech",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "36_speech",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "18_Ionosphere",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "18_Ionosphere",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "18_Ionosphere",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "18_Ionosphere",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "06_cardio",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "06_cardio",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "06_cardio",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "06_cardio",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "34_smtp",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "34_smtp",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "34_smtp",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "34_smtp",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "30_satellite",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "30_satellite",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "30_satellite",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "30_satellite",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "16_http",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "16_http",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "16_http",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "16_http",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "24_mnist",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "24_mnist",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "24_mnist",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "24_mnist",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "47_yeast",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "47_yeast",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "47_yeast",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "47_yeast",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "28_pendigits",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 8
+    },
+    {
+        "dataset": "28_pendigits",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 8
+    },
+    {
+        "dataset": "28_pendigits",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 8
+    },
+    {
+        "dataset": "28_pendigits",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 8
+    },
+    {
+        "dataset": "01_ALOI",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "01_ALOI",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "01_ALOI",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "01_ALOI",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "37_Stamps",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "37_Stamps",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "37_Stamps",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "37_Stamps",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "09_census",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "09_census",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "09_census",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "09_census",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "17_InternetAds",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "17_InternetAds",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "17_InternetAds",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "17_InternetAds",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "32_shuttle",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "32_shuttle",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "32_shuttle",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "32_shuttle",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "43_WDBC",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "43_WDBC",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "43_WDBC",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "43_WDBC",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "38_thyroid",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "38_thyroid",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "38_thyroid",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "38_thyroid",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "26_optdigits",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "26_optdigits",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "26_optdigits",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "26_optdigits",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "31_satimage-2",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "31_satimage-2",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "31_satimage-2",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "31_satimage-2",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "40_vowels",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 6
+    },
+    {
+        "dataset": "40_vowels",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 6
+    },
+    {
+        "dataset": "40_vowels",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 6
+    },
+    {
+        "dataset": "40_vowels",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 6
+    },
+    {
+        "dataset": "05_campaign",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "05_campaign",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "05_campaign",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "05_campaign",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "10_cover",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "10_cover",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "10_cover",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "10_cover",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "23_mammography",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "23_mammography",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "23_mammography",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "23_mammography",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "12_fault",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "12_fault",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "12_fault",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "12_fault",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "08_celeba",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "08_celeba",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "08_celeba",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "08_celeba",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "02_annthyroid",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "02_annthyroid",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "02_annthyroid",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "02_annthyroid",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "27_PageBlocks",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "27_PageBlocks",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "27_PageBlocks",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "27_PageBlocks",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "11_donors",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "11_donors",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "11_donors",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "11_donors",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "21_Lymphography",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 9
+    },
+    {
+        "dataset": "21_Lymphography",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 9
+    },
+    {
+        "dataset": "21_Lymphography",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 9
+    },
+    {
+        "dataset": "21_Lymphography",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 9
+    },
+    {
+        "dataset": "41_Waveform",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "41_Waveform",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "41_Waveform",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "41_Waveform",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "13_fraud",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 14
+    },
+    {
+        "dataset": "13_fraud",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 14
+    },
+    {
+        "dataset": "13_fraud",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 14
+    },
+    {
+        "dataset": "13_fraud",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 14
+    },
+    {
+        "dataset": "29_Pima",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "29_Pima",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "29_Pima",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "29_Pima",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "25_musk",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "25_musk",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "25_musk",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "25_musk",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "39_vertebral",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "39_vertebral",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "39_vertebral",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "39_vertebral",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "20_letter",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "20_letter",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "20_letter",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "20_letter",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "15_Hepatitis",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 9
+    },
+    {
+        "dataset": "15_Hepatitis",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 9
+    },
+    {
+        "dataset": "15_Hepatitis",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 9
+    },
+    {
+        "dataset": "15_Hepatitis",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 9
+    },
+    {
+        "dataset": "04_breastw",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "04_breastw",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "04_breastw",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "04_breastw",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "35_SpamBase",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "35_SpamBase",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "35_SpamBase",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "35_SpamBase",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "22_magic.gamma",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "22_magic.gamma",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "22_magic.gamma",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "22_magic.gamma",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 5
+    },
+    {
+        "dataset": "42_WBC",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "42_WBC",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "42_WBC",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "42_WBC",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "45_wine",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 6
+    },
+    {
+        "dataset": "45_wine",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 6
+    },
+    {
+        "dataset": "45_wine",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 6
+    },
+    {
+        "dataset": "45_wine",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 6
+    },
+    {
+        "dataset": "19_landsat",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "19_landsat",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "19_landsat",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "19_landsat",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 15
+    },
+    {
+        "dataset": "44_Wilt",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 2
+    },
+    {
+        "dataset": "44_Wilt",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 2
+    },
+    {
+        "dataset": "44_Wilt",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 2
+    },
+    {
+        "dataset": "44_Wilt",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 2
+    },
+    {
+        "dataset": "14_glass",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "14_glass",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "14_glass",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "14_glass",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "33_skin",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "33_skin",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "33_skin",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "33_skin",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 1
+    },
+    {
+        "dataset": "07_Cardiotocography",
+        "kernel": "rbf",
+        "layers": "5,5",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "07_Cardiotocography",
+        "kernel": "rbf",
+        "layers": "10,10",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "07_Cardiotocography",
+        "kernel": "rbf",
+        "layers": "15,15",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "07_Cardiotocography",
+        "kernel": "rbf",
+        "layers": "10,10,10",
+        "latent_dim": 10
+    }
+]

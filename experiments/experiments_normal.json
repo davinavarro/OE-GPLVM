@@ -1,0 +1,542 @@
+[
+    {
+        "dataset": "01_ALOI",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "01_ALOI",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "01_ALOI",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "01_ALOI",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "01_ALOI",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "01_ALOI",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 13
+    },
+    {
+        "dataset": "02_annthyroid",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "02_annthyroid",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "02_annthyroid",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "02_annthyroid",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "02_annthyroid",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "02_annthyroid",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 3
+    },
+    {
+        "dataset": "03_backdoor",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    },
+    {
+        "dataset": "03_backdoor",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    },
+    {
+        "dataset": "03_backdoor",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    },
+    {
+        "dataset": "03_backdoor",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    },
+    {
+        "dataset": "03_backdoor",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    },
+    {
+        "dataset": "03_backdoor",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    },
+    {
+        "dataset": "04_breastw",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "04_breastw",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "04_breastw",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "04_breastw",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "04_breastw",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "04_breastw",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 4
+    },
+    {
+        "dataset": "05_campaign",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 31
+    },
+    {
+        "dataset": "05_campaign",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 31
+    },
+    {
+        "dataset": "05_campaign",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 31
+    },
+    {
+        "dataset": "05_campaign",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 31
+    },
+    {
+        "dataset": "05_campaign",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 31
+    },
+    {
+        "dataset": "05_campaign",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 31
+    },
+    {
+        "dataset": "06_cardio",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "06_cardio",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "06_cardio",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "06_cardio",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "06_cardio",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "06_cardio",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "07_Cardiotocography",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "07_Cardiotocography",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "07_Cardiotocography",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "07_Cardiotocography",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "07_Cardiotocography",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "07_Cardiotocography",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 10
+    },
+    {
+        "dataset": "08_celeba",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 19
+    },
+    {
+        "dataset": "08_celeba",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 19
+    },
+    {
+        "dataset": "08_celeba",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 19
+    },
+    {
+        "dataset": "08_celeba",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 19
+    },
+    {
+        "dataset": "08_celeba",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 19
+    },
+    {
+        "dataset": "08_celeba",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 19
+    },
+    {
+        "dataset": "09_census",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    },
+    {
+        "dataset": "09_census",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    },
+    {
+        "dataset": "09_census",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.01",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    },
+    {
+        "dataset": "09_census",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    },
+    {
+        "dataset": "09_census",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "10,10",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    },
+    {
+        "dataset": "09_census",
+        "kernel": "rbf",
+        "batch_size": "128",
+        "learning_rate": "0.001",
+        "loss": "normal",
+        "layers": "5,5,5",
+        "n_epochs": "5000",
+        "latent_dim": 64
+    }
+]
