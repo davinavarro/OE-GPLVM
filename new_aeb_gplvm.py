@@ -21,7 +21,6 @@ import torch.nn.functional as F
 from tqdm import trange
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
-
 class LatentVariable(gpytorch.Module):
     def __init__(self, n, dim):
         super().__init__()
@@ -89,7 +88,8 @@ class NN_Encoder(LatentVariable):
         for i in range(1, len(self.mu_layers)):
             mu = torch.tanh(self.mu_layers[i](mu))
             if i == (len(self.mu_layers) - 1):
-                mu = mu * 5
+                #mu = mu * 5
+                mu = mu * 1
         return mu
 
     def sigma(self, Y):
@@ -97,7 +97,8 @@ class NN_Encoder(LatentVariable):
         for i in range(1, len(self.sg_layers)):
             sg = torch.tanh(self.sg_layers[i](sg))
             if i == (len(self.sg_layers) - 1):
-                sg = sg * 5
+                #sg = sg * 5
+                sg = sg * 1
 
         sg = sg.reshape(len(sg), self.latent_dim, self.latent_dim)
         sg = torch.einsum("aij,akj->aik", sg, sg)
@@ -176,7 +177,6 @@ class GP_Decoder(BayesianGPLVM):
         # self.mean_module = ConstantMean(ard_num_dims=latent_dim)
         self.mean_module = ZeroMean()
         if not kernel:
-            print("Kernel não escolhido!")
             self.covar_module = ScaleKernel(RBFKernel(ard_num_dims=latent_dim))
         else:
             if kernel == "rbf":
@@ -255,25 +255,33 @@ class AD_GPLVM:
 
         self.loss_list = []
 
-        elbo = VariationalELBO(self.likelihood, self.model, num_data=len(Y_train))
+        self.elbo = VariationalELBO(self.likelihood, self.model, num_data=len(Y_train))
         self.model.train()
 
         iterator = trange(self.n_epochs, leave=None, miniters = 100)
-
         for i in iterator:
             batch_index = self.model._get_batch_idx(self.batch_size)
             self.optimizer.zero_grad()
             sample = self.model.sample_latent_variable(Y_train)
             sample_batch = sample[batch_index]
             output_batch = self.model(sample_batch)
-            loss = -elbo(output_batch, Y_train[batch_index].T).sum()
+            loss = -self.elbo(output_batch, Y_train[batch_index].T).sum()
             self.loss_list.append(loss.item())
-            if i % 500 == 0:
-                iterator.set_description(
-                    "Loss: " + str(float(np.round(loss.item(), 2))) + ", iter no: " + str(i)
-                )
             loss.backward()
             self.optimizer.step()
+    
+    def calculate_train_elbo(self, Y_train):
+        elbo_iter = 0
+        for i in range(20):
+            with torch.no_grad():
+                self.model.eval()
+                self.likelihood.eval()
+                sample = self.model.sample_latent_variable(Y_train)
+                output = self.model(sample)
+                loss = -self.elbo(output, Y_train.T).sum()
+            elbo_iter += float(loss)
+        elbo_avg = elbo_iter/20
+        return elbo_avg
 
     def predict_score(self, X_test: torch.tensor):
         with torch.no_grad():
