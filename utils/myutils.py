@@ -69,8 +69,9 @@ class Utils:
         Z =  experiment['n_inducing']
         K = experiment['kernel'].upper()
         Q = experiment['latent_dim']
+        anomaly_type = experiment['anomaly_type']
         
-        base_path = f"experiments/normal_full_results/{dataset}/"
+        base_path = f"experiments/complete/results/{anomaly_type}/{dataset}/"
         file_name = f"NN_{NN}_Z_{Z}_K_{K}_Q_{Q}.json"
         
         if not os.path.exists(base_path):
