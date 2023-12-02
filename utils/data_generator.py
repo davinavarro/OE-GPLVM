@@ -364,10 +364,10 @@ class DataGenerator:
         else:
             raise NotImplementedError
 
-        print(f"current noise type: {noise_type}")
+        #print(f"current noise type: {noise_type}")
 
         # show the statistic
-        self.utils.data_description(X=X, y=y)
+        #self.utils.data_description(X=X, y=y)
 
         # spliting the current data to the training set and testing set
         X_train, X_test, y_train, y_test = train_test_split(
