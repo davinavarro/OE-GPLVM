@@ -4,7 +4,7 @@ import numpy as np
 import random
 import torch
 import tensorflow as tf
-
+import json
 # metric
 from sklearn.metrics import roc_auc_score, average_precision_score
 
@@ -61,6 +61,37 @@ class Utils:
         u = 0.5 * (a + b) * (a + b + 1) + b
         return int(u)
 
+    
+    def save_experiment(self, experiment):
+        NN = experiment['layers']
+        NN = NN.replace(",", "_")
+        dataset = experiment['dataset']
+        Z =  experiment['n_inducing']
+        K = experiment['kernel'].upper()
+        Q = experiment['latent_dim']
+        
+        base_path = f"experiments/normal_full_results/{dataset}/"
+        file_name = f"NN_{NN}_Z_{Z}_K_{K}_Q_{Q}.json"
+        
+        if not os.path.exists(base_path):
+            os.mkdir(base_path)
+
+        pd.Series(experiment).to_json(base_path+file_name)
+    
+    def read_json_from_folder(self,folder_path):
+        json_files = [f for f in os.listdir(folder_path) if f.endswith('.json')]
+        # Create an empty list to hold individual DataFrames
+        dataframes = []
+        # Loop through each JSON file and load it into a DataFrame
+        for json_file in json_files:
+            file_path = os.path.join(folder_path, json_file)
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+                dataframes.append(data)
+        combined_dataframe = pd.DataFrame(dataframes)
+        return combined_dataframe
+    
+    
     def data_description(self, X, y):
         des_dict = {}
         des_dict["Samples"] = X.shape[0]
@@ -205,6 +236,12 @@ class Utils:
             grad += torch.norm(grad_tuple[i])
 
         return grad
+
+    def float_tensor(self,X): 
+        return X.clone().detach()
+   
+    def rmse(self,Y_test, Y_recon):
+        return torch.mean((Y_test - Y_recon.clone().detach())**2).sqrt()
 
     # visualize the gradient flow in network
     def plot_grad_flow(self, named_parameters):
