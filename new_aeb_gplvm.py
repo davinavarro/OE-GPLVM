@@ -7,7 +7,6 @@ from gpytorch.mlls.added_loss_term import AddedLossTerm
 from gpytorch.models import ApproximateGP
 from gpytorch.priors import NormalPrior, MultivariateNormalPrior
 from gpytorch.variational import CholeskyVariationalDistribution, VariationalStrategy
-from prettytable import PrettyTable
 from torch import nn
 from torch.distributions import kl_divergence
 from typing import List
@@ -181,9 +180,9 @@ class GP_Decoder(BayesianGPLVM):
         else:
             if kernel == "rbf":
                 self.covar_module = ScaleKernel(RBFKernel(ard_num_dims=latent_dim))
-            elif kernel == "matern_5_2":
+            elif kernel == "matern_1_2":
                 self.covar_module = ScaleKernel(
-                    MaternKernel(nu=2.5, ard_num_dims=latent_dim)
+                    MaternKernel(nu=0.5, ard_num_dims=latent_dim)
                 )
             elif kernel == "matern_3_2":
                 self.covar_module = ScaleKernel(
@@ -213,6 +212,7 @@ class AD_GPLVM:
         nn_layers: tuple,
         lr: float,
         batch_size: int,
+        kernel: str = None, 
     ) -> None:
         self.latent_dim = latent_dim
         self.n_inducing = n_inducing
@@ -220,6 +220,7 @@ class AD_GPLVM:
         self.nn_layers = nn_layers
         self.lr = lr
         self.batch_size = batch_size
+        self.kernel = kernel
 
     def fit(self, Y_train: torch.tensor):
         n_train = len(Y_train)
@@ -233,7 +234,8 @@ class AD_GPLVM:
         self.encoder = NN_Encoder(
             n_train, self.latent_dim, prior_x, data_dim, self.nn_layers
         )
-
+        
+        
         self.model = GP_Decoder(
             n_train,
             data_dim,
@@ -241,7 +243,9 @@ class AD_GPLVM:
             self.n_inducing,
             self.encoder,
             self.nn_layers,
+            self.kernel
         )
+        
 
         self.likelihood = GaussianLikelihood()
 
@@ -258,8 +262,8 @@ class AD_GPLVM:
         self.elbo = VariationalELBO(self.likelihood, self.model, num_data=len(Y_train))
         self.model.train()
 
-        iterator = trange(self.n_epochs, leave=None, miniters = 100)
-        for i in iterator:
+        #iterator = trange(self.n_epochs, leave=None, miniters = 100)
+        for i in range(self.n_epochs):
             batch_index = self.model._get_batch_idx(self.batch_size)
             self.optimizer.zero_grad()
             sample = self.model.sample_latent_variable(Y_train)
@@ -282,8 +286,13 @@ class AD_GPLVM:
             elbo_iter += float(loss)
         elbo_avg = elbo_iter/20
         return elbo_avg
+    
+    def caulate_validation_metrics(self,Y_train, lb_train):
+        pass
 
     def predict_score(self, X_test: torch.tensor):
+        #sem scaling
+        
         with torch.no_grad():
             self.model.eval()
             self.likelihood.eval()
@@ -310,7 +319,7 @@ class AD_GPLVM:
             klu_expanded = ll_shape.T.add_(klu).sum(-1).T.div((self.n_train))
 
             score = -(log_likelihood - klu_expanded - kl_x).detach().numpy()
-            score = MinMaxScaler().fit_transform(np.reshape(score, (-1, 1)))
+            #score = MinMaxScaler().fit_transform(np.reshape(score, (-1, 1)))
 
             return score
 
