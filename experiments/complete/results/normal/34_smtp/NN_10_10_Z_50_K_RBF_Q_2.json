@@ -1,0 +1,1 @@
+{"dataset":"34_smtp","n_samples":95156,"n_features":3,"n_anomaly":30,"pct_anomaly":0.03,"domain":"Web","kernel":"rbf","batch_size":"128","learning_rate":"0.01","loss":"normal","anomaly_type":"normal","noise_type":"normal","noise_ratio":"0","latent_dim":2,"layers":"10,10","n_inducing":"50","n_epochs":"1000","test_auc_roc":0.0,"test_auc_pr":0.0}
