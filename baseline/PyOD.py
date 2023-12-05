@@ -286,7 +286,7 @@ class PYOD:
         else:
             best_param = None
 
-        print(f"best param: {best_param}")
+        #print(f"best param: {best_param}")
 
         # set seed
         self.utils.set_seed(self.seed)
