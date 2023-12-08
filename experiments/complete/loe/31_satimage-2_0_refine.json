@@ -1,0 +1,1 @@
+{"aucroc": 0.9930343300110742, "aucpr": 0.9418149788745073, "dataset": "31_satimage-2", "method": "refine", "test_ratio": 0.012062033314187249, "train_ratio": 0.0, "labeled_anomalies": 0.0}

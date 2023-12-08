@@ -1,0 +1,1 @@
+{"aucroc": 0.6411602343712168, "aucpr": 0.49336291418000977, "dataset": "29_Pima", "method": "blind", "test_ratio": 0.3566666666666667, "train_ratio": 0.0, "labeled_anomalies": 0.0}

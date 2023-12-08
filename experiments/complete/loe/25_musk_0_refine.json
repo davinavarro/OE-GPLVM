@@ -1,0 +1,1 @@
+{"aucroc": 0.9999922510654784, "aucpr": 0.9997701149425285, "dataset": "25_musk", "method": "refine", "test_ratio": 0.031556039173014146, "train_ratio": 0.0, "labeled_anomalies": 0.0}

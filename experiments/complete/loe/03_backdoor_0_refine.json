@@ -1,0 +1,1 @@
+{"aucroc": 0.7585934406942393, "aucpr": 0.2637789134167175, "dataset": "03_backdoor", "method": "refine", "test_ratio": 0.023666666666666666, "train_ratio": 0.0, "labeled_anomalies": 0.0}

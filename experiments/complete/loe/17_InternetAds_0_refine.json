@@ -1,0 +1,1 @@
+{"aucroc": 0.6278219696969698, "aucpr": 0.30352746764795346, "dataset": "17_InternetAds", "method": "refine", "test_ratio": 0.1864406779661017, "train_ratio": 0.0, "labeled_anomalies": 0.0}

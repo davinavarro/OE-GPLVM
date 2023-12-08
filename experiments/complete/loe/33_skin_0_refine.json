@@ -1,0 +1,1 @@
+{"aucroc": 0.5248803007644673, "aucpr": 0.1979285793149935, "dataset": "33_skin", "method": "refine", "test_ratio": 0.21233333333333335, "train_ratio": 0.0, "labeled_anomalies": 0.0}

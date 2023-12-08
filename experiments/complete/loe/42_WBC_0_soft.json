@@ -1,0 +1,1 @@
+{"aucroc": 0.9887161618868936, "aucpr": 0.8686069030057307, "dataset": "42_WBC", "method": "soft", "test_ratio": 0.043333333333333335, "train_ratio": 0.0, "labeled_anomalies": 0.0}

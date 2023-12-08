@@ -1,0 +1,1 @@
+{"aucroc": 0.6812468749999999, "aucpr": 0.20238859977125975, "dataset": "02_annthyroid", "method": "blind", "test_ratio": 0.07407407407407407, "train_ratio": 0.0, "labeled_anomalies": 0.0}

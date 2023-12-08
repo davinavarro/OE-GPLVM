@@ -1,0 +1,1 @@
+{"aucroc": 0.9922091836153178, "aucpr": 0.9339151876089138, "dataset": "32_shuttle", "method": "refine", "test_ratio": 0.07366666666666667, "train_ratio": 0.0, "labeled_anomalies": 0.0}

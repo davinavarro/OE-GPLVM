@@ -1,0 +1,1 @@
+{"aucroc": 0.9688303755144032, "aucpr": 0.9451937223837955, "dataset": "04_breastw", "method": "refine", "test_ratio": 0.36, "train_ratio": 0.0, "labeled_anomalies": 0.0}

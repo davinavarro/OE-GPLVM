@@ -1,0 +1,1 @@
+{"aucroc": 0.7598095238095237, "aucpr": 0.49211223714403174, "dataset": "07_Cardiotocography", "method": "blind", "test_ratio": 0.2204724409448819, "train_ratio": 0.0, "labeled_anomalies": 0.0}

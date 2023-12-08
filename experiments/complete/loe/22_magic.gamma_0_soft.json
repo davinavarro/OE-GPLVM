@@ -1,0 +1,1 @@
+{"aucroc": 0.665153301426441, "aucpr": 0.6021552147751686, "dataset": "22_magic.gamma", "method": "soft", "test_ratio": 0.3506666666666667, "train_ratio": 0.0, "labeled_anomalies": 0.0}

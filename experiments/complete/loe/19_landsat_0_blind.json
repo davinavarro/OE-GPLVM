@@ -1,0 +1,1 @@
+{"aucroc": 0.4201185499673416, "aucpr": 0.16949548070102377, "dataset": "19_landsat", "method": "blind", "test_ratio": 0.20714655618850336, "train_ratio": 0.0, "labeled_anomalies": 0.0}

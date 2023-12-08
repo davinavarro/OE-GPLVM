@@ -1,0 +1,1 @@
+{"aucroc": 0.9991008991008992, "aucpr": 0.9832140676783533, "dataset": "21_Lymphography", "method": "refine", "test_ratio": 0.04666666666666667, "train_ratio": 0.0, "labeled_anomalies": 0.0}

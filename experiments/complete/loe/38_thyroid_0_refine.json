@@ -1,0 +1,1 @@
+{"aucroc": 0.9566737836438923, "aucpr": 0.4356140764879225, "dataset": "38_thyroid", "method": "refine", "test_ratio": 0.024734982332155476, "train_ratio": 0.0, "labeled_anomalies": 0.0}

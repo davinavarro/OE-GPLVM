@@ -1,0 +1,1 @@
+{"aucroc": 0.758847153319159, "aucpr": 0.3031387373508661, "dataset": "15_Hepatitis", "method": "blind", "test_ratio": 0.17, "train_ratio": 0.085, "labeled_anomalies": 0.5}

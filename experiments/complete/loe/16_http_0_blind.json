@@ -1,0 +1,1 @@
+{"aucroc": 0.9969839142091154, "aucpr": 0.4448181678707952, "dataset": "16_http", "method": "blind", "test_ratio": 0.005333333333333333, "train_ratio": 0.0, "labeled_anomalies": 0.0}

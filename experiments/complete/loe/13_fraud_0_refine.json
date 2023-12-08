@@ -1,0 +1,1 @@
+{"aucroc": 0.9430918196994991, "aucpr": 0.09759238064508627, "dataset": "13_fraud", "method": "refine", "test_ratio": 0.0016666666666666668, "train_ratio": 0.0, "labeled_anomalies": 0.0}

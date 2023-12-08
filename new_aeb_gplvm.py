@@ -20,6 +20,7 @@ import torch.nn.functional as F
 from tqdm import trange
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
+
 class LatentVariable(gpytorch.Module):
     def __init__(self, n, dim):
         super().__init__()
@@ -41,6 +42,7 @@ class kl_gaussian_loss_term(AddedLossTerm):
         self.data_dim = data_dim
 
     def loss(self):
+        self.kl_per_all = kl_divergence(self.q_x, self.p_x)
         kl_per_latent_dim = kl_divergence(self.q_x, self.p_x).sum(axis=0)
         kl_per_point = kl_per_latent_dim.sum() / self.n  # scalar
         return kl_per_point / self.data_dim
@@ -87,7 +89,7 @@ class NN_Encoder(LatentVariable):
         for i in range(1, len(self.mu_layers)):
             mu = torch.tanh(self.mu_layers[i](mu))
             if i == (len(self.mu_layers) - 1):
-                #mu = mu * 5
+                # mu = mu * 5
                 mu = mu * 1
         return mu
 
@@ -96,7 +98,7 @@ class NN_Encoder(LatentVariable):
         for i in range(1, len(self.sg_layers)):
             sg = torch.tanh(self.sg_layers[i](sg))
             if i == (len(self.sg_layers) - 1):
-                #sg = sg * 5
+                # sg = sg * 5
                 sg = sg * 1
 
         sg = sg.reshape(len(sg), self.latent_dim, self.latent_dim)
@@ -119,7 +121,33 @@ class NN_Encoder(LatentVariable):
 
         x_kl = kl_gaussian_loss_term(q_x, prior_x, self.n, self.data_dim)
         self.update_added_loss_term("x_kl", x_kl)
-        return q_x.rsample()
+        self.kl_latent = x_kl
+        self.qxrsample = q_x.rsample()
+        return self.qxrsample
+
+    # def forward(self, Y, batch_idx=None, test=False):
+    #    mu = self.mu(Y)
+    #    sg = self.sigma(Y)
+
+
+#
+#    if batch_idx is None:
+#        batch_idx = np.arange(self.n)
+#
+#    mu = mu[batch_idx, ...]
+#    sg = sg[batch_idx, ...]
+#
+#    q_x = torch.distributions.MultivariateNormal(mu, sg)
+#
+#    prior_x = self.prior_x
+#    prior_x.loc = prior_x.loc[: len(batch_idx), ...]
+#    prior_x.covariance_matrix = prior_x.covariance_matrix[: len(batch_idx), ...]
+#
+#    x_kl = kl_gaussian_loss_term(q_x, self.prior_x, len(batch_idx), self.data_dim)
+#    self.update_added_loss_term("x_kl", x_kl)
+#    self.kl_latent = x_kl
+#    self.qxrsample = q_x.rsample()
+#    return q_x.rsample()
 
 
 class BayesianGPLVM(ApproximateGP):
@@ -212,7 +240,7 @@ class AD_GPLVM:
         nn_layers: tuple,
         lr: float,
         batch_size: int,
-        kernel: str = None, 
+        kernel: str = None,
     ) -> None:
         self.latent_dim = latent_dim
         self.n_inducing = n_inducing
@@ -222,7 +250,12 @@ class AD_GPLVM:
         self.batch_size = batch_size
         self.kernel = kernel
 
-    def fit(self, Y_train: torch.tensor):
+    def fit(self, Y_train, lb_train=None, loss_type="blind"):
+        Y_train = torch.tensor(Y_train, dtype=torch.float32)
+        if lb_train is not None:
+            lb_train = torch.tensor(lb_train, dtype=torch.float32)
+            self.contamination = (lb_train.sum() / len(lb_train)).item()
+
         n_train = len(Y_train)
         self.n_train = n_train
         data_dim = Y_train.shape[1]
@@ -234,8 +267,7 @@ class AD_GPLVM:
         self.encoder = NN_Encoder(
             n_train, self.latent_dim, prior_x, data_dim, self.nn_layers
         )
-        
-        
+
         self.model = GP_Decoder(
             n_train,
             data_dim,
@@ -243,9 +275,8 @@ class AD_GPLVM:
             self.n_inducing,
             self.encoder,
             self.nn_layers,
-            self.kernel
+            self.kernel,
         )
-        
 
         self.likelihood = GaussianLikelihood()
 
@@ -258,22 +289,144 @@ class AD_GPLVM:
         )
 
         self.loss_list = []
+        self.loe_list = []
+        self.lll_elbo = []
+        self.klx_elbo = []
+        self.klu_elbo = []
+        self.lll_loe = []
+        self.klx_loe = []
+        self.klu_loe = []
 
-        self.elbo = VariationalELBO(self.likelihood, self.model, num_data=len(Y_train))
+        self.elbo = VariationalELBO(
+            self.likelihood, self.model, num_data=len(Y_train), combine_terms=True
+        )
         self.model.train()
 
-        #iterator = trange(self.n_epochs, leave=None, miniters = 100)
         for i in range(self.n_epochs):
+            self.i = i
             batch_index = self.model._get_batch_idx(self.batch_size)
+            self.batch_index = batch_index
             self.optimizer.zero_grad()
             sample = self.model.sample_latent_variable(Y_train)
             sample_batch = sample[batch_index]
             output_batch = self.model(sample_batch)
+
+            loe_loss = self.calculate_loe_loss(
+                Y_train, batch_index, output_batch, method=loss_type
+            )
+
+            if loe_loss > 2 * (self.loe_list[-1]) and self.i > 20:
+                break
+
             loss = -self.elbo(output_batch, Y_train[batch_index].T).sum()
             self.loss_list.append(loss.item())
-            loss.backward()
+
+            loe_loss.backward()
+            # loss.backward()
             self.optimizer.step()
-    
+
+    def calculate_loe_loss(self, Y_train, batch_index, output_batch, method="blind"):
+        # Verosemelhança
+        self.lll = (
+            self.likelihood.expected_log_prob(Y_train[batch_index].T, output_batch)
+            .sum(0)
+            .div(len(batch_index))
+            # .sum()
+        )
+
+        # Inducao
+        inducing_loss = torch.zeros_like(self.lll)
+        klu_total = self.klu = (
+            self.model.variational_strategy.kl_divergence().div(self.n_train).sum()
+        )
+        inducing_loss.add_(klu_total)
+        self.klu = inducing_loss / self.batch_size
+
+        # Latente
+        added_loss = torch.zeros_like(self.lll)
+        for added_loss_term in self.model.added_loss_terms():
+            added_loss.add_(
+                (added_loss_term.loss() * Y_train.shape[1]) / self.batch_size
+            )
+        self.klx = added_loss
+
+        # ELBO
+        self.pred = output_batch
+        self.batch = Y_train[batch_index].T
+        self.loss_n = -(self.lll - self.klu - self.klx)
+        self.loss_a = -self.loss_n
+
+        # loe_loss = -(self.lll - self.klu - self.klx).sum()
+
+        self.lll_loe.append(-self.lll.sum().item())
+        self.klu_loe.append(-self.klu.sum().item())
+        self.klx_loe.append(-self.klx.sum().item())
+
+        if method == "blind":
+            loe_loss = self.loss_n
+            self.loss_result = loe_loss
+
+        elif method == "refine":
+            _, idx_n = torch.topk(
+                self.loss_n,
+                int(self.loss_n.shape[0] * (1 - self.contamination)),
+                largest=False,
+                sorted=False,
+            )
+
+            loe_loss = self.loss_n[idx_n]
+            self.loss_result = loe_loss
+
+        elif method == "hard":
+            _, idx_n = torch.topk(
+                self.loss_n,
+                int(self.loss_n.shape[0] * (1 - self.contamination)),
+                largest=False,
+                sorted=False,
+            )
+            _, idx_a = torch.topk(
+                self.loss_n,
+                int(self.loss_n.shape[0] * self.contamination),
+                largest=True,
+                sorted=False,
+            )
+            loe_loss = torch.cat(
+                [
+                    self.loss_n[idx_n],
+                    self.loss_a[idx_a],
+                ],
+                0,
+            )
+
+            self.loss_result = loe_loss
+
+        elif method == "soft":
+            _, idx_n = torch.topk(
+                self.loss_n,
+                int(self.loss_n.shape[0] * (1 - self.contamination)),
+                largest=False,
+                sorted=False,
+            )
+            _, idx_a = torch.topk(
+                self.loss_n,
+                int(self.loss_n.shape[0] * self.contamination),
+                largest=True,
+                sorted=False,
+            )
+
+            loe_loss = torch.cat(
+                [
+                    self.loss_n[idx_n],
+                    0.25 * self.loss_a[idx_a],
+                ],
+                0,
+            )
+
+            self.loss_result = loe_loss
+
+        self.loe_list.append(loe_loss.sum().item())
+        return loe_loss.sum()
+
     def calculate_train_elbo(self, Y_train):
         elbo_iter = 0
         for i in range(20):
@@ -284,15 +437,12 @@ class AD_GPLVM:
                 output = self.model(sample)
                 loss = -self.elbo(output, Y_train.T).sum()
             elbo_iter += float(loss)
-        elbo_avg = elbo_iter/20
+        elbo_avg = elbo_iter / 20
         return elbo_avg
-    
-    def caulate_validation_metrics(self,Y_train, lb_train):
-        pass
 
     def predict_score(self, X_test: torch.tensor):
-        #sem scaling
-        
+        # sem scaling
+        X_test = torch.tensor(X_test, dtype=torch.float32)
         with torch.no_grad():
             self.model.eval()
             self.likelihood.eval()
@@ -319,7 +469,7 @@ class AD_GPLVM:
             klu_expanded = ll_shape.T.add_(klu).sum(-1).T.div((self.n_train))
 
             score = -(log_likelihood - klu_expanded - kl_x).detach().numpy()
-            #score = MinMaxScaler().fit_transform(np.reshape(score, (-1, 1)))
+            # score = MinMaxScaler().fit_transform(np.reshape(score, (-1, 1)))
 
             return score
 

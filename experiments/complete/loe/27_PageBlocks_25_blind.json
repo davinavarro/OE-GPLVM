@@ -1,0 +1,1 @@
+{"aucroc": 0.8896624952597648, "aucpr": 0.4931591648550949, "dataset": "27_PageBlocks", "method": "blind", "test_ratio": 0.09456118665018541, "train_ratio": 0.023640296662546353, "labeled_anomalies": 0.25}

@@ -1,0 +1,1 @@
+{"aucroc": 0.8326302344398024, "aucpr": 0.16994211469526593, "dataset": "08_celeba", "method": "refine", "test_ratio": 0.022333333333333334, "train_ratio": 0.0, "labeled_anomalies": 0.0}

@@ -1,0 +1,1 @@
+{"aucroc": 0.7132069510268563, "aucpr": 0.16621939856750972, "dataset": "40_vowels", "method": "blind", "test_ratio": 0.034324942791762014, "train_ratio": 0.034324942791762014, "labeled_anomalies": 1.0}

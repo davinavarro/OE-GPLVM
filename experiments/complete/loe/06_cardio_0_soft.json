@@ -1,0 +1,1 @@
+{"aucroc": 0.9595079913442921, "aucpr": 0.6483545281777807, "dataset": "06_cardio", "method": "soft", "test_ratio": 0.09636363636363636, "train_ratio": 0.0, "labeled_anomalies": 0.0}

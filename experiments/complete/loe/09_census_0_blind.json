@@ -1,0 +1,1 @@
+{"aucroc": 0.6608314531227497, "aucpr": 0.08707845826825382, "dataset": "09_census", "method": "blind", "test_ratio": 0.06166666666666667, "train_ratio": 0.0, "labeled_anomalies": 0.0}

@@ -1,0 +1,1 @@
+{"aucroc": 0.0, "aucpr": 0.0, "dataset": "34_smtp", "method": "blind", "test_ratio": 0.0003333333333333333, "train_ratio": 0.00016666666666666666, "labeled_anomalies": 0.5}

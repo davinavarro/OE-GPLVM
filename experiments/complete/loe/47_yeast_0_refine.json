@@ -1,0 +1,1 @@
+{"aucroc": 0.43013113139992837, "aucpr": 0.3113291204978579, "dataset": "47_yeast", "method": "refine", "test_ratio": 0.34080717488789236, "train_ratio": 0.0, "labeled_anomalies": 0.0}

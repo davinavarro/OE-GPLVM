@@ -1,0 +1,1 @@
+{"aucroc": 0.8837492978091646, "aucpr": 0.1999550166907923, "dataset": "23_mammography", "method": "blind", "test_ratio": 0.02266666666666667, "train_ratio": 0.0, "labeled_anomalies": 0.0}

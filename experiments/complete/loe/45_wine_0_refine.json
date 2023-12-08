@@ -1,0 +1,1 @@
+{"aucroc": 0.8323067632850242, "aucpr": 0.2500025251192039, "dataset": "45_wine", "method": "refine", "test_ratio": 0.08, "train_ratio": 0.0, "labeled_anomalies": 0.0}

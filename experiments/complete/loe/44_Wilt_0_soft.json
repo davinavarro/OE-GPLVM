@@ -1,0 +1,1 @@
+{"aucroc": 0.284643260318936, "aucpr": 0.03435002773035567, "dataset": "44_Wilt", "method": "soft", "test_ratio": 0.05325034578146611, "train_ratio": 0.0, "labeled_anomalies": 0.0}

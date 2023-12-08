@@ -1,0 +1,1 @@
+{"aucroc": 0.40272115384615387, "aucpr": 0.1082994423055802, "dataset": "39_vertebral", "method": "blind", "test_ratio": 0.13333333333333333, "train_ratio": 0.06666666666666667, "labeled_anomalies": 0.5}

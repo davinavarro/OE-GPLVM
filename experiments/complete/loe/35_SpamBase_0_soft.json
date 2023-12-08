@@ -1,0 +1,1 @@
+{"aucroc": 0.5457333427442123, "aucpr": 0.41103129258588156, "dataset": "35_SpamBase", "method": "soft", "test_ratio": 0.3990498812351544, "train_ratio": 0.0, "labeled_anomalies": 0.0}

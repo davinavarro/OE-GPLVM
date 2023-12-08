@@ -1,0 +1,1 @@
+{"aucroc": 0.7330741110003323, "aucpr": 0.08714210313383705, "dataset": "41_Waveform", "method": "refine", "test_ratio": 0.02904162633107454, "train_ratio": 0.0, "labeled_anomalies": 0.0}

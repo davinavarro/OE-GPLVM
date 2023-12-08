@@ -1,0 +1,1 @@
+{"aucroc": 0.838488038277512, "aucpr": 0.8023489627950461, "dataset": "18_Ionosphere", "method": "blind", "test_ratio": 0.36666666666666664, "train_ratio": 0.36666666666666664, "labeled_anomalies": 1.0}
