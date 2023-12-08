@@ -1,1 +1,9 @@
-{"aucroc": 0.5286095822362581, "aucpr": 0.03749142332656875, "dataset": "01_ALOI", "method": "soft", "test_ratio": 0.030333333333333334, "train_ratio": 0.0, "labeled_anomalies": 0.0}
+{
+    "aucroc": 0.5286095822362581,
+    "aucpr": 0.03749142332656875,
+    "dataset": "01_ALOI",
+    "method": "soft",
+    "test_ratio": 0.030333333333333334,
+    "train_ratio": 0.0,
+    "labeled_anomalies": 0.0
+}
