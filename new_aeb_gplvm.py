@@ -250,7 +250,7 @@ class AD_GPLVM:
         self.batch_size = batch_size
         self.kernel = kernel
 
-    def fit(self, Y_train, lb_train=None, loss_type="blind"):
+    def fit(self, Y_train, lb_train=None, loss_type="blind", tune=False):
         Y_train = torch.tensor(Y_train, dtype=torch.float32)
         if lb_train is not None:
             lb_train = torch.tensor(lb_train, dtype=torch.float32)
@@ -321,8 +321,26 @@ class AD_GPLVM:
             loss = -self.elbo(output_batch, Y_train[batch_index].T).sum()
             self.loss_list.append(loss.item())
 
-            loe_loss.backward()
-            # loss.backward()
+            # if i > 10 and loss_type in ["soft", "hard", "refine"]:
+            #    loe_loss.backward()
+            # else:
+            #    loss.backward()
+
+            if loss_type in ["soft", "hard", "refine"] and tune == "alt":
+                # print("alt")
+                if i % 2 == 0:
+                    loe_loss.backward()
+                else:
+                    loss.backward()
+            elif loss_type in ["soft", "hard", "refine"] and tune == "start":
+                # print("start")
+                if i > 10 == 0:
+                    loe_loss.backward()
+                else:
+                    loss.backward()
+            else:
+                loe_loss.backward()
+
             self.optimizer.step()
 
     def calculate_loe_loss(self, Y_train, batch_index, output_batch, method="blind"):
