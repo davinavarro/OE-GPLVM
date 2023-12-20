@@ -298,7 +298,7 @@ class AD_GPLVM:
         self.klu_loe = []
 
         self.elbo = VariationalELBO(
-            self.likelihood, self.model, num_data=len(Y_train), combine_terms=True
+            self.likelihood, self.model, num_data=len(Y_train), combine_terms=False
         )
         self.model.train()
 
@@ -310,21 +310,29 @@ class AD_GPLVM:
             sample = self.model.sample_latent_variable(Y_train)
             sample_batch = sample[batch_index]
             output_batch = self.model(sample_batch)
-
             loe_loss = self.calculate_loe_loss(
                 Y_train, batch_index, output_batch, method=loss_type
             )
 
-            if loe_loss > 2 * (self.loe_list[-1]) and self.i > 20:
-                break
-
-            loss = -self.elbo(output_batch, Y_train[batch_index].T).sum()
+            # Calculo Elbo Comum
+            elbo_ll, elbo_klu, _, elbo_klx = self.elbo(
+                output_batch, Y_train[batch_index].T
+            )
+            self.lll_elbo.append(-elbo_ll.sum().item())
+            self.klx_elbo.append(elbo_klx.sum().item())
+            self.klu_elbo.append(elbo_klu.sum().item())
+            loss = -(elbo_ll - elbo_klu - elbo_klx).sum()
             self.loss_list.append(loss.item())
+            # loss = -self.elbo(output_batch, Y_train[batch_index].T).sum()
 
-            # if i > 10 and loss_type in ["soft", "hard", "refine"]:
-            #    loe_loss.backward()
-            # else:
-            #    loss.backward()
+            #if loe_loss > 2 * (self.loe_list[-1]) and self.i > 20:
+            #    break
+
+            # self.lll_elbo.append(-elbo_ll.mean().item())
+            # self.klx_elbo.append(elbo_klx.mean().item())
+            # self.klu_elbo.append(elbo_klu.mean().item())
+            # loss = -(elbo_ll -elbo_klu - elbo_klx).mean()
+            # self.loss_list.append(loss.item())
 
             if loss_type in ["soft", "hard", "refine"] and tune == "alt":
                 # print("alt")
@@ -334,7 +342,7 @@ class AD_GPLVM:
                     loss.backward()
             elif loss_type in ["soft", "hard", "refine"] and tune == "start":
                 # print("start")
-                if i > 10 == 0:
+                if i > 15:
                     loe_loss.backward()
                 else:
                     loss.backward()
@@ -367,24 +375,34 @@ class AD_GPLVM:
                 (added_loss_term.loss() * Y_train.shape[1]) / self.batch_size
             )
         self.klx = added_loss
-
-        # ELBO
         self.pred = output_batch
         self.batch = Y_train[batch_index].T
+
+        # Calcular LOSS
         self.loss_n = -(self.lll - self.klu - self.klx)
-        self.loss_a = -self.loss_n
+        #self.loss_a = -torch.log(
+        #    1 + torch.exp(torch.max(self.loss_n)).item() - torch.exp(self.loss_n)
+        #)
+
+        ###################ESSE FUNCIONA MELHOR DO QUE TODOS OS OUTROS E NÃO EXPLODE####################
+        self.loss_a = -1/self.loss_n 
 
         # loe_loss = -(self.lll - self.klu - self.klx).sum()
 
         self.lll_loe.append(-self.lll.sum().item())
-        self.klu_loe.append(-self.klu.sum().item())
-        self.klx_loe.append(-self.klx.sum().item())
+        self.klu_loe.append(self.klu.sum().item())
+        self.klx_loe.append(self.klx.sum().item())
+
+        # self.lll_loe.append(-self.lll.mean().item())
+        # self.klu_loe.append(self.klu.mean().item())
+        # self.klx_loe.append(self.klx.mean().item())
 
         if method == "blind":
             loe_loss = self.loss_n
             self.loss_result = loe_loss
 
         elif method == "refine":
+            # print("refine")
             _, idx_n = torch.topk(
                 self.loss_n,
                 int(self.loss_n.shape[0] * (1 - self.contamination)),
@@ -396,6 +414,7 @@ class AD_GPLVM:
             self.loss_result = loe_loss
 
         elif method == "hard":
+            # print("hard")
             _, idx_n = torch.topk(
                 self.loss_n,
                 int(self.loss_n.shape[0] * (1 - self.contamination)),
@@ -443,15 +462,20 @@ class AD_GPLVM:
             self.loss_result = loe_loss
 
         self.loe_list.append(loe_loss.sum().item())
+        #self.loe_list.append(torch.logsumexp(loe_loss,0).item())
+        #return torch.logsumexp(loe_loss,0)
         return loe_loss.sum()
+        # self.loe_list.append(loe_loss.mean().item())
+        # return loe_loss.mean()
 
+    #
     def calculate_train_elbo(self, Y_train):
         elbo_iter = 0
         for i in range(20):
             with torch.no_grad():
                 self.model.eval()
                 self.likelihood.eval()
-                sample = self.model.sample_latent_variable(Y_train)
+                sample = self.model.sample_latent_variable(Y_train) 
                 output = self.model(sample)
                 loss = -self.elbo(output, Y_train.T).sum()
             elbo_iter += float(loss)
