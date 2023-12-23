@@ -296,6 +296,10 @@ class AD_GPLVM:
         self.lll_loe = []
         self.klx_loe = []
         self.klu_loe = []
+        self.norm_ln = []
+        self.norm_la = []
+        self.ELBO_max = 0
+        self.ELBO_min = 0
 
         self.elbo = VariationalELBO(
             self.likelihood, self.model, num_data=len(Y_train), combine_terms=False
@@ -342,7 +346,7 @@ class AD_GPLVM:
                     loss.backward()
             elif loss_type in ["soft", "hard", "refine"] and tune == "start":
                 # print("start")
-                if i > 15:
+                if i > 10:
                     loe_loss.backward()
                 else:
                     loss.backward()
@@ -385,8 +389,23 @@ class AD_GPLVM:
         #)
 
         ###################ESSE FUNCIONA MELHOR DO QUE TODOS OS OUTROS E NÃO EXPLODE####################
-        self.loss_a = -1/self.loss_n 
+        #self.loss_a = -1/self.loss_n 
 
+        ######################################ELBO LOE##################################################
+        
+        if (self.loss_n.max().item() > self.ELBO_max and self.i > 0)  or  self.i == 10 :
+            self.ELBO_max = self.loss_n.max().item()
+        if (self.loss_n.min().item() < self.ELBO_min  and self.i > 0) or self.i == 10:
+            self.ELBO_min = self.loss_n.min().item()
+        
+        ln_minmax = -( (self.ELBO_min - self.loss_n )/(self.ELBO_max - self.ELBO_min) ) 
+        la_minmax = -torch.log(0.1 + torch.exp(torch.tensor(1)) - torch.exp(ln_minmax))
+        self.norm_ln.append(ln_minmax.sum().item())
+        self.norm_la.append(la_minmax.sum().item())
+
+        self.loss_n = ln_minmax
+        self.loss_a = la_minmax
+        ################################################################################################
         # loe_loss = -(self.lll - self.klu - self.klx).sum()
 
         self.lll_loe.append(-self.lll.sum().item())
@@ -454,7 +473,7 @@ class AD_GPLVM:
             loe_loss = torch.cat(
                 [
                     self.loss_n[idx_n],
-                    0.25 * self.loss_a[idx_a],
+                    0.5 * self.loss_n[idx_a] + 0.5 * self.loss_a[idx_a]
                 ],
                 0,
             )
